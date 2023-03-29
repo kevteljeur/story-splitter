@@ -1,0 +1,215 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="generator" content="by-hand" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>A HTML template</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/cash/8.1.2/cash.min.js"></script>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" />
+	<style>
+		body {
+			background-color: #333;
+
+		}
+
+		textarea {
+			padding: 1rem;
+			margin-bottom: 1rem;
+			background-color: #222;
+			font-size: .85rem;
+			line-height: 1.3em;
+			color: #fff;
+			border: solid 1px #777;
+		}
+
+		.input-control {
+			padding: .2rem 0;
+			font-size: .85rem;
+		}
+
+		.output-field {
+			margin-bottom: 1rem;
+		}
+
+		.output-field textarea {
+			margin-bottom: .2rem;
+		}
+
+		.output-field .field-counter,
+		.input-fields .field-counter {
+			font-size: .75rem;
+		}
+
+		fieldset {
+			border: none;
+			margin-bottom: 1rem;
+			color: #fff;
+		}
+
+		.header {
+			color: #fff;
+		}
+
+	</style>
+	<script type="text/javascript" language="javascript">
+		$.fn.elasticHeight = function () {
+			let element = $( this )[ 0 ];
+			let scrollHeight = element.scrollHeight;
+			let offsetHeight = element.offsetHeight;
+			let height = $( this ).height();
+
+			if ( scrollHeight > offsetHeight ) {
+				$( this ).height( scrollHeight - ( ( offsetHeight - height ) / 2 ) );
+			}
+
+			$( this ).on( "input", function () {
+				let element = $( this )[ 0 ];
+				let scrollHeight = element.scrollHeight;
+				let offsetHeight = element.offsetHeight;
+				let height = $( this ).height();
+
+				if ( scrollHeight > offsetHeight ) {
+					$( this ).height( scrollHeight - ( ( offsetHeight - height ) / 2 ) );
+				}
+			} );
+
+			return this;
+		};
+
+		function chunkifyText ( sourceText, options = {} ) {
+			let destinationChunks = [];
+			let maxChunkLength = options.maxChunk - 3 || 495;
+
+			if ( options.post_count ) {
+				maxChunkLength -= 8;
+			}
+
+			while ( sourceText.length ) {
+				let sourceTextChunk = sourceText.substring( 0, maxChunkLength );
+				sourceText = sourceText.substring( maxChunkLength );
+
+				while ( sourceTextChunk.length > 0 ) {
+					let testableSourceTextChunk = sourceTextChunk + ' ';
+
+					if ( sourceText.length === 0 ) {
+						destinationChunks.push( sourceTextChunk.trim() );
+
+						break;
+					} else if ( [ '. ', '? ', '! ', ') ', ': ' ].some( element => testableSourceTextChunk.endsWith( element ) ) ) {
+						destinationChunks.push( sourceTextChunk.trim() );
+
+						break;
+					} else {
+						let endCharacter = sourceTextChunk.substring( sourceTextChunk.length - 1 );
+
+						sourceText = endCharacter + sourceText;
+						sourceTextChunk = sourceTextChunk.substring( 0, sourceTextChunk.length - 1 );
+					}
+				}
+
+				if ( sourceText.length === 0 ) {
+					break;
+				}
+			}
+
+			if ( options.post_count ) {
+				destinationChunks = destinationChunks.map( ( chunk, iter ) => {
+					chunk += ' [' + ( iter + 1 ) + '/' + destinationChunks.length + ']';
+
+					return chunk;
+				} );
+			}
+
+			return destinationChunks;
+		}
+
+		let $outputFieldTemplate;
+
+		function generateSplitDisplay ( chunks, chunkLength ) {
+			chunks.forEach( ( chunk, iter ) => {
+				let $clonedField = $outputFieldTemplate.clone().appendTo( '#output_fields' );
+
+				$clonedField.addClass( 'field-' + chunkLength );
+
+				$( 'textarea', $clonedField ).val( chunk );
+				$( '.field-counter', $clonedField ).text( chunk.length + '/' + chunkLength );
+				$( 'textarea', $clonedField ).elasticHeight();
+			} );
+		}
+
+		function onDoSplit () {
+			let $sourceTextField = $( '#source_text' );
+			let chunkLength = $( '#chunk_length' ).val();
+			let sourceText = $sourceTextField.val();
+			let withPostCount = $( '#post_count:checked' ).val() ? true : false;
+
+			let chunks = chunkifyText( sourceText, { maxChunk: chunkLength, post_count: withPostCount } );
+
+			$( '#output_fields' ).empty();
+
+			generateSplitDisplay( chunks, chunkLength );
+		}
+
+		$( () => {
+			$outputFieldTemplate = $( 'div.output-field' ).remove();
+			let $sourceTextField = $( '#source_text' );
+
+			$( '#do_split' ).on( 'click', event => {
+				onDoSplit();
+			} );
+
+			$sourceTextField.elasticHeight();
+
+			$( 'div.input-fields .field-counter' ).text( $sourceTextField.val().length );
+
+			$sourceTextField.on( 'change', event => {
+				$( this ).elasticHeight();
+
+				$( 'div.input-fields .field-counter' ).text( $sourceTextField.val().length );
+			} );
+		} );
+
+	</script>
+</head>
+
+<body class="">
+	<div class="header container">
+		<h2 class="">Story Splitter</h2>
+		<p class="">A tool for splitting your content into bite-size pieces for posting to a social network.</p>
+	</div>
+	<div class="main container">
+		<form id="paragraphs_form">
+			<fieldset>
+				<div class="input-fields">
+					<div class="field-content"><textarea id="source_text" rows="30" cols="60"></textarea>
+					</div>
+					<div class="field-counter"></div>
+				</div>
+				<div class="input-control"><select id="chunk_length" name="chunk_length">
+						<!-- option>280</option -->
+						<option>400</option>
+						<option selected>500</option>
+						<option>600</option>
+						<option>750</option>
+						<option>1000</option>
+					</select></div>
+				<div class="input-control"><input type="checkbox" id="post_count" name="post_count" value="true" /><span class="checkable">With post count</span></div>
+				<div class="input-control"><button class="" type="button" id="do_split" name="do_split">Split story</button>
+				</div>
+			</fieldset>
+			<fieldset id="output_fields">
+				<div class="output-field">
+					<div class="field-content"><textarea rows="5" cols="60"></textarea></div>
+					<div class="field-counter"></div>
+				</div>
+			</fieldset>
+		</form>
+	</div>
+	<div class="footer container">
+
+	</div>
+</body>
+
+</html>

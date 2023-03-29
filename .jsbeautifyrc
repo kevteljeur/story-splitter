@@ -1,0 +1,54 @@
+{
+	"_default": {
+		"indent_with_tabs": true,
+		"eol": "\n",
+		"indent_level": 0,
+		"preserve_newlines": true,
+		"max_preserve_newlines": 2,
+		"space_in_paren": true,
+		"space_after_anon_function": true,
+		"space_after_named_function": true,
+		"brace_style": "collapse,preserve-inline",
+		"unindent_chained_methods": false,
+		"break_chained_methods": false,
+		"keep_array_indentation": false,
+		"wrap_line_length": 0,
+		"jslint_happy": false,
+		"html": {
+			"end_with_newline": true,
+			"wrap_line_length": 0,
+			"js": {},
+			"css": {
+				"newline_between_rules": true
+			}
+		},
+		"css": {
+			"newline_between_rules": true
+		}
+	},
+	"indent_with_tabs": true,
+	"eol": "\n",
+	"indent_level": 0,
+	"preserve_newlines": true,
+	"max_preserve_newlines": 2,
+	"space_in_paren": true,
+	"space_after_anon_function": true,
+	"space_after_named_function": true,
+	"brace_style": "collapse,preserve-inline",
+	"unindent_chained_methods": false,
+	"break_chained_methods": false,
+	"keep_array_indentation": false,
+	"wrap_line_length": 0,
+	"jslint_happy": false,
+	"html": {
+		"end_with_newline": true,
+		"wrap_line_length": 0,
+		"js": {},
+		"css": {
+			"newline_between_rules": true
+		}
+	},
+	"css": {
+		"newline_between_rules": true
+	}
+}
